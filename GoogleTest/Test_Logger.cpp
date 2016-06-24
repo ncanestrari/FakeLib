@@ -30,6 +30,6 @@ class Test_Logger : public ::testing::Test
 
 
 TEST_F(Test_Logger, Logger_Print){
-   EXPECT_EQ(EXIT_SUCCESS, Logger_Print("Test Printing to Log %f %d", 3.14, 6));
+   EXPECT_EQ(EXIT_SUCCESS, Logger_Print("Test Printing to Log %f %d\n", 3.14, 6));
 }
 
