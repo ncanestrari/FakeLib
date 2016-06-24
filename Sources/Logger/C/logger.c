@@ -18,7 +18,7 @@ static FILE* log;
 int Logger_Init(const char* fname)
 {
    if( !fname ) log = stdout;
-   else log = fopen(fname, "rw");
+   else log = fopen(fname, "w");
    if( !log ) return EXIT_FAILURE;
    return EXIT_SUCCESS;
 }
@@ -26,7 +26,7 @@ int Logger_Init(const char* fname)
 
 int Logger_Quit(void)
 {
-   if( log != stdout ) fclose(log);
+   if( log != stdout || log == NULL) fclose(log);
    return EXIT_SUCCESS;
 }
 

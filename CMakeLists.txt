@@ -13,4 +13,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 subdirs(Sources/Logger)
 subdirs(Sources/Status)
 subdirs(Sources/Vector)
+subdirs(GoogleTest)
 
