@@ -10,7 +10,7 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
-int Logger_Init(char* fname);
+int Logger_Init(const char* fname);
 int Logger_Quit(void);
 int Logger_Print(const char* format, ...);
 

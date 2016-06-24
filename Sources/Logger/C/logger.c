@@ -15,7 +15,7 @@
 
 static FILE* log;
 
-int Logger_Init(char* fname)
+int Logger_Init(const char* fname)
 {
    if( !fname ) log = stdout;
    else log = fopen(fname, "rw");
