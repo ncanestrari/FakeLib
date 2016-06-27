@@ -23,9 +23,12 @@ struct Status_s
 };
 typedef struct Status_s Status_t;
 
-void FillStatusOK(Status_t Status);
-void FillStatusWN(Status_t Status, const char *Message);
-void FillStatusKO(Status_t Status, const char *Message);
+int Status_Init(void);
+int Status_Quit(void);
+
+void FillStatusOK(Status_t *Status);
+void FillStatusWN(Status_t *Status, const char *Message);
+void FillStatusKO(Status_t *Status, const char *Message);
 
 #endif /* !__STATUS_H__ */
 

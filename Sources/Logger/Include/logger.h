@@ -12,7 +12,7 @@
 
 int Logger_Init(const char* fname);
 int Logger_Quit(void);
-int Logger_Print(const char* format, ...);
+int Logger_Print(const char* Message);
 
 #endif /* !__LOGGER_H__ */
 

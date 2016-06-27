@@ -10,34 +10,38 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
+#include <string.h>
 
 #include "vector.h"
 
 #include "logger.h"
 #include "status.h"
 
+#define MESSAGE_LEN 128
+
 struct Vector_s{
    int      Size;
    double  *Values;
 };
 
-typedef int (*Printer)(const char *, ...);
 
-static Status_t Vector_PrintAux(Vector_t *vec, Printer printer);
+int Vector_Init(void)
+{
+   return Status_Init();
+}
 
 
-Vector_t *Vector_Create(int Size, ...)
+int Vector_Quit(void)
+{
+   return Status_Quit();
+}
+
+Vector_t *Vector_Create(int Size, double *content)
 {
    Vector_t *vec = (Vector_t *) malloc(sizeof(Vector_t));
-   int i;
-   va_list Values;
-   va_start(Values, Size);
    vec->Size = Size;
    vec->Values = (double *) malloc(Size*sizeof(double));
-   for(i = 0; i < Size; ++i)
-      vec->Values[i] = va_arg(Values, double);
-   va_end(Values);
+   memcpy(vec->Values, content, Size*sizeof(double));
    return vec;
 }
 
@@ -47,6 +51,7 @@ Vector_t *Vector_CreateZero(int Size)
    int i;
    Vector_t *vec = (Vector_t *) malloc(sizeof(Vector_t));
    vec->Size = Size;
+   vec->Values = (double *) malloc(Size*sizeof(double));
    for(i = 0; i < Size; ++i){
       vec->Values[i] = 0.0;
    }
@@ -58,20 +63,12 @@ Status_t Vector_Destroy(Vector_t *vec)
 {
    Status_t Status;   
    if(!vec) {
-      FillStatusWN(Status, "Vector is NULL\n");
+      FillStatusWN(&Status, "Vector is NULL\n");
    } else {
       free(vec->Values);
       free(vec);
-      FillStatusOK(Status);
+      FillStatusOK(&Status);
    }
-   return Status;
-}
-
-
-Status_t Vector_Print(Vector_t *vec)
-{
-   Status_t Status;
-   Status = Vector_PrintAux(vec, &printf);
    return Status;
 }
 
@@ -79,7 +76,20 @@ Status_t Vector_Print(Vector_t *vec)
 Status_t Vector_Log(Vector_t *vec)
 {
    Status_t Status;
-   Status = Vector_PrintAux(vec, &Logger_Print);
+   char Message[MESSAGE_LEN];
+   if(!vec || !vec->Values ){
+      FillStatusKO(&Status, "Argument NULL\n");
+   } else {
+      int i;
+      sprintf(Message, "Vector instance %p\nSize: %u\n", vec, vec->Size);
+      Logger_Print(Message);
+      for(i = 0; i < vec->Size; ++i){
+         sprintf(Message, "%f\n", vec->Values[i]);
+         Logger_Print(Message);
+      }
+      Logger_Print("\n");
+      FillStatusOK(&Status);
+   }
    return Status;
 }
 
@@ -88,15 +98,15 @@ Status_t Vector_Scalar(Vector_t *vec1, Vector_t *vec2, double *res)
 {
    Status_t Status;
    if(!vec1 || !vec2){
-      FillStatusKO(Status, "Argument NULL\n");
+      FillStatusKO(&Status, "Argument NULL\n");
    } else if(vec1->Size != vec2->Size){
-      FillStatusKO(Status, "Incompatible vectors\n");
+      FillStatusKO(&Status, "Incompatible vectors\n");
    } else {
       int i;
       *res = 0.0;
       for(i = 0; i < vec1->Size; ++i)
          *res += vec1->Values[i]*vec2->Values[i];
-      FillStatusOK(Status);
+      FillStatusOK(&Status);
    }
    return Status;
 }
@@ -105,16 +115,15 @@ Status_t Vector_Scalar(Vector_t *vec1, Vector_t *vec2, double *res)
 Status_t Vector_Add(Vector_t *vec1, Vector_t * vec2, Vector_t *res)
 {
    Status_t Status;
-   if(!vec1 || !vec2){
-      FillStatusKO(Status, "Argument NULL\n");
+   if(!vec1 || !vec2 || !res){
+      FillStatusKO(&Status, "Argument NULL\n");
    } else if(vec1->Size != vec2->Size){
-      FillStatusKO(Status, "Incompatible vectors\n");
+      FillStatusKO(&Status, "Incompatible vectors\n");
    } else {
       int i;
-      if(!res) res = Vector_CreateZero(vec1->Size);
       for(i = 0; i < vec1->Size; ++i)
          res->Values[i] += vec1->Values[i] + vec2->Values[i];
-      FillStatusOK(Status);
+      FillStatusOK(&Status);
    }
    return Status;
 }
@@ -123,36 +132,30 @@ Status_t Vector_Add(Vector_t *vec1, Vector_t * vec2, Vector_t *res)
 Status_t Vector_Opposite(Vector_t *vec, Vector_t *res)
 {
    Status_t Status;
-   if(!vec || !vec->Values ){
-      FillStatusKO(Status, "Argument NULL\n");
-   } else if(res){
-      FillStatusWN(Status, "result will be overwritten\n");
-      free(res);
+   if(!vec || !vec->Values || !res || vec->Size != res->Size){
+      FillStatusKO(&Status, "Argument NULL\n");
    } else {
       int i;
-      res = Vector_CreateZero(vec->Size);
       for(i = 0; i < vec->Size; ++i)
          res->Values[i] = -vec->Values[i];
-      FillStatusOK(Status);
+      FillStatusOK(&Status);
    }
    return Status;
 }
 
-
-static Status_t Vector_PrintAux(Vector_t *vec, Printer printer)
+int Vector_Equal(Vector_t *vec1, Vector_t *vec2)
 {
-   Status_t Status;
-   if(!vec || !vec->Values ){
-      FillStatusKO(Status, "Argument NULL\n");
+   int      res = 1;
+   if(!vec1 || !vec2){
+      res = 0;
+   } else if(vec1->Size != vec2->Size){
+      res = 0;
    } else {
       int i;
-      printer("Vector instance %p\nSize: %u\n", vec, vec->Size);
-      for(i = 0; i < vec->Size; ++i)
-         printer("%f\n", vec->Values[i]);
-      printer("\n");
-      FillStatusOK(Status);
+      for(i = 0; i < vec1->Size; ++i){
+         res = res && (vec1->Values[i] == vec2->Values[i]);
+         if(res == 0) break;
+      }
    }
-   return Status;
+   return res;
 }
-
-

@@ -13,6 +13,8 @@
 
 #include <gtest/gtest.h>
 
+#define MESSAGE_LEN 128
+
 extern "C" {
 #include "logger.h"
 }
@@ -30,6 +32,13 @@ class Test_Logger : public ::testing::Test
 
 
 TEST_F(Test_Logger, Logger_Print){
-   EXPECT_EQ(EXIT_SUCCESS, Logger_Print("Test Printing to Log %f %d\n", 3.14, 6));
+   char Message[MESSAGE_LEN];
+   sprintf(Message,"Test Printing to Log %f %d\n", 3.14, 6);
+   EXPECT_EQ(EXIT_SUCCESS, Logger_Print(Message));
 }
 
+int main(int argc, char *argv[])
+{
+   ::testing::InitGoogleTest(&argc, argv);
+   return RUN_ALL_TESTS();
+}

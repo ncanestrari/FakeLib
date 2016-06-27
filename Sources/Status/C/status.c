@@ -15,24 +15,35 @@
 
 #include "logger.h"
 
-#define MAX_MSG_LEN 128
 
-void FillStatusOK(Status_t Status)
+int Status_Init(void)
 {
-   Status.State = OK;
+   return Logger_Init("fakelib.log");
 }
 
 
-void FillStatusWN(Status_t Status, const char *Message)
+int Status_Quit(void)
 {
-   Status.State = WN;
+   return Logger_Quit();
+}
+
+
+void FillStatusOK(Status_t *Status)
+{
+   Status->State = OK;
+}
+
+
+void FillStatusWN(Status_t *Status, const char *Message)
+{
+   Status->State = WN;
    Logger_Print(Message);
 }
 
 
-void FillStatusKO(Status_t Status, const char *Message)
+void FillStatusKO(Status_t *Status, const char *Message)
 {
-   Status.State = KO;
+   Status->State = KO;
    Logger_Print(Message);
 }
 

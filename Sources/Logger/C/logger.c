@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 
 #include "logger.h"
 
@@ -31,12 +30,9 @@ int Logger_Quit(void)
 }
 
 
-int Logger_Print(const char* format, ...)
+int Logger_Print(const char* Message)
 {
-   va_list args;
-   va_start(args, format);
-   vfprintf(log, format, args);
-   va_end(args);
+   fprintf(log, "%s", Message);
    return EXIT_SUCCESS;
 }
 

@@ -40,7 +40,16 @@ set_property(TARGET ${GTEST_LIBRARY} PROPERTY IMPORTED_LOCATION
 add_dependencies(${GTEST_LIBRARY} googletest)
 
 include_directories(${GTEST_INCLUDE_DIR})
+include_directories(${FakeLib_SOURCE_DIR}/fff/Include)
 include_directories(${FakeLib_SOURCE_DIR}/Sources/Logger/Include)
-add_executable(gTest Main_TestAll.cpp Test_Logger.cpp)
-target_link_libraries(gTest Logger ${GTEST_LIBRARY} pthread)
+include_directories(${FakeLib_SOURCE_DIR}/Sources/Status/Include)
+include_directories(${FakeLib_SOURCE_DIR}/Sources/Vector/Include)
 
+add_executable(Test_Logger Test_Logger.cpp)
+target_link_libraries(Test_Logger Logger ${GTEST_LIBRARY} pthread)
+
+add_executable(Test_Status Test_Status.cpp)
+target_link_libraries(Test_Status Status ${GTEST_LIBRARY} pthread)
+
+add_executable(Test_Vector Test_Vector.cpp)
+target_link_libraries(Test_Vector Vector ${GTEST_LIBRARY} pthread)
