@@ -26,9 +26,9 @@ extern "C" {
 #include "logger.h"
 }
 
-DEFINE_FFF_GLOBALS;
-
 #define UNUSED(x) x __attribute__((unused)) 
+
+DEFINE_FFF_GLOBALS;
 
 
 FAKE_VALUE_FUNC(int, Status_Init);
