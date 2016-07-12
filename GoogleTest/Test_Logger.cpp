@@ -37,6 +37,7 @@ TEST_F(Test_Logger, Logger_Print){
    EXPECT_EQ(EXIT_SUCCESS, Logger_Print(Message));
 }
 
+
 int main(int argc, char *argv[])
 {
    ::testing::InitGoogleTest(&argc, argv);
