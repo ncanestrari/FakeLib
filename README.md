@@ -1,12 +1,17 @@
 # FakeLib
 training on googletest + fff
 
-with cmake make and gcc installed
+with gcc, make and cmake installed
 
-mkdir Build
-cd Build
-cmake ..
-make
+
+   mkdir Build
+
+   cd Build
+
+   cmake ..
+
+   make
+
 
 libraries are in lib
 executables (tests) in bin
