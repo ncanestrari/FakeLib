@@ -4,13 +4,10 @@ training on googletest + fff
 with gcc, make and cmake installed
 
 
-   mkdir Build
-
-   cd Build
-
-   cmake ..
-
-   make
+    mkdir Build
+    cd Build
+    cmake ..
+    make
 
 
 libraries are in lib
